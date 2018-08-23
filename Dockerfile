@@ -8,7 +8,7 @@ ADD . /go/src/github.com/relistan/billmonger
 WORKDIR /go/src/github.com/relistan/billmonger
 RUN go get -u github.com/golang/dep/cmd/dep
 RUN dep ensure
-RUN go build -o main . 
+RUN go build
 
 # --------------------------------------
 # Production Container
