@@ -34,6 +34,8 @@ func NewBill(config *BillingConfig) *Bill {
 	return bill
 }
 
+// lightText sets the font color to the light branding color from
+// the config file.
 func (b *Bill) lightText() {
 	b.pdf.SetTextColor(
 		b.config.Colors.ColorLight.R,
@@ -42,6 +44,8 @@ func (b *Bill) lightText() {
 	)
 }
 
+// darkText sets the font color to the dark branding color from
+// the config file.
 func (b *Bill) darkText() {
 	b.pdf.SetTextColor(
 		b.config.Colors.ColorDark.R,
@@ -50,12 +54,30 @@ func (b *Bill) darkText() {
 	)
 }
 
+// blackText sets the text color to black
 func (b *Bill) blackText() {
 	b.pdf.SetTextColor(0, 0, 0)
 }
 
+// whiteText sets the text color to black
 func (b *Bill) whiteText() {
 	b.pdf.SetTextColor(255, 255, 255)
+}
+
+func (b *Bill) darkDrawColor() {
+	b.pdf.SetDrawColor(
+		b.config.Colors.ColorDark.R,
+		b.config.Colors.ColorDark.G,
+		b.config.Colors.ColorDark.B,
+	)
+}
+
+func (b *Bill) lightFillColor() {
+	b.pdf.SetFillColor(
+		b.config.Colors.ColorLight.R,
+		b.config.Colors.ColorLight.G,
+		b.config.Colors.ColorLight.B,
+	)
 }
 
 // makeHeader returns the function that will be called to build
@@ -97,7 +119,7 @@ func (b *Bill) makeHeader() func() {
 
 		// Line Break
 		b.pdf.Ln(10)
-		b.pdf.SetDrawColor(68, 54, 152)
+		b.darkDrawColor()
 		b.pdf.Line(8, 40, 200, 40)
 	}
 }
@@ -108,7 +130,7 @@ func (b *Bill) makeHeader() func() {
 func (b *Bill) makeFooter() func() {
 	return func() {
 		b.pdf.Ln(10)
-		b.pdf.SetDrawColor(68, 54, 152)
+		b.darkDrawColor()
 		b.pdf.Line(8, 280, 200, 280)
 		b.pdf.SetXY(8.0, 285)
 		b.darkText()
@@ -171,7 +193,7 @@ func (b *Bill) drawBillTable(headers []string, values []string) {
 	b.pdf.SetFillColor(255, 0, 0)
 	b.whiteText()
 	b.pdf.SetDrawColor(64, 64, 64)
-	b.pdf.SetFillColor(247, 126, 25)
+	b.lightFillColor()
 	b.pdf.SetLineWidth(0.3)
 	b.pdf.SetFont(serifFont, "B", 10)
 
@@ -208,7 +230,7 @@ func (b *Bill) drawBillablesTable(headers []string, billables []BillableItem, wi
 	b.pdf.SetFillColor(255, 0, 0)
 	b.whiteText()
 	b.pdf.SetDrawColor(64, 64, 64)
-	b.pdf.SetFillColor(247, 126, 25)
+	b.lightFillColor()
 	b.pdf.SetLineWidth(0.3)
 	b.pdf.SetFont(serifFont, "B", 10)
 
@@ -279,7 +301,7 @@ func (b *Bill) drawBankDetails() {
 	}
 
 	b.pdf.SetDrawColor(64, 64, 64)
-	b.pdf.SetFillColor(247, 126, 25)
+	b.lightFillColor()
 	for i, v := range b.config.Bank.Strings() {
 		b.whiteText()
 		b.pdf.SetFont(serifFont, "B", 10)

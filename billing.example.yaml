@@ -1,0 +1,56 @@
+---
+# Information aboutt he bill, company, and person billing
+business:
+ name:       "My Software Company"
+ person:     "Billie Bob McAwesome"
+ address:    "1234 Awesome Street, Funny Town, Postal 16, Ireland"
+ image_file: "MySoftware.png"
+
+# To whom the bill is to be presented
+bill_to:
+  email:          "someone@example.com"
+  name:           "Example Co, Inc."
+  street:         "1213 Company Ave, Ste 16"
+  city_state_zip: "New York, NY 10010"
+  country:        "USA"
+
+# Description fields for the bill
+bill:
+  department: "Awesome Engineering Dept"
+  currency:   "EUR"
+  payment_terms: "Net 30"
+  due_date: "{{ endOfNextMonth }}"
+
+# You may have a number of billables, either services or goods.
+# If you have more than will fit on the page, it will get ugly.
+billables:
+  - quantity:    1
+    description: "Services rendered as awesome consultant for period {{ billingPeriod }}"
+    unit_price:  1234.56
+    currency:    €
+  - quantity:    20
+    description: "Floppy disks"
+    unit_price:  10.23
+    currency:    €
+
+# Where to send the money!
+bank:
+  transfer_type: "Wire"
+  name:          "Acme Bank"
+  address:       "-"
+  account_type:  "Checking"
+  iban:          "DE99 5555 5555 5555 5555 55"
+  sort_code:     "12-12-12"
+
+# Branding colors to use on the bill, assumes a light color
+# and a dark color. If you use two dark colors, it will be ugly.
+colors:
+  color_light:
+    r: 117
+    g: 180
+    b: 209
+
+  color_dark:
+    r: 16
+    g: 46
+    b: 95
