@@ -168,9 +168,8 @@ func (b *Bill) drawBillTable(headers []string, values []string) {
 	b.pdf.SetLineWidth(0.3)
 	b.pdf.SetFont(serifFont, "B", 10)
 
-	baseX := 8.0
 	baseY := b.pdf.GetY() + 10
-	b.pdf.SetXY(baseX, baseY)
+	b.pdf.SetY(baseY)
 	for _, header := range headers {
 		width := float64(len(header)) * 4.9
 		b.pdf.CellFormat(width, 5, header, "1", 0, "C", true, 0, "")
@@ -179,7 +178,6 @@ func (b *Bill) drawBillTable(headers []string, values []string) {
 	b.pdf.Ln(5)
 	b.pdf.SetFillColor(255, 255, 255)
 	b.blackText()
-	b.pdf.SetX(baseX)
 	b.pdf.SetFont(serifFont, "", 8)
 	for i, val := range values {
 		width := float64(len(headers[i])) * 4.9
@@ -207,9 +205,8 @@ func (b *Bill) drawBillablesTable(headers []string, billables []BillableItem, wi
 	b.pdf.SetLineWidth(0.3)
 	b.pdf.SetFont(serifFont, "B", 10)
 
-	baseX := 8.0
 	baseY := b.pdf.GetY() + 10
-	b.pdf.SetXY(baseX, baseY)
+	b.pdf.SetY(baseY)
 	for i, header := range headers {
 		b.pdf.CellFormat(widths[i], 5, header, "1", 0, "C", true, 0, "")
 	}
@@ -217,7 +214,6 @@ func (b *Bill) drawBillablesTable(headers []string, billables []BillableItem, wi
 	b.pdf.Ln(5)
 	b.pdf.SetFillColor(255, 255, 255)
 	b.blackText()
-	b.pdf.SetX(baseX)
 	b.pdf.SetFont(serifFont, "", 8)
 
 	// Keep the sub-total as we run through it
@@ -236,7 +232,6 @@ func (b *Bill) drawBillablesTable(headers []string, billables []BillableItem, wi
 	b.pdf.SetDrawColor(255, 255, 255)
 	b.pdf.SetFont(serifFont, "", 8)
 	b.pdf.Ln(2)
-	b.pdf.SetX(baseX)
 	b.drawBlanks(billables, widths)
 	subTotalText := billables[0].Currency + " " + niceFloatStr(subTotal)
 	b.pdf.CellFormat(widths[len(widths)-2], 4, "Subtotal", "1", 0, "R", true, 0, "")
@@ -244,7 +239,6 @@ func (b *Bill) drawBillablesTable(headers []string, billables []BillableItem, wi
 
 	// Draw Tax
 	b.pdf.Ln(4)
-	b.pdf.SetX(baseX)
 	b.drawBlanks(billables, widths)
 	b.pdf.CellFormat(widths[len(widths)-2], 4, "Tax", "1", 0, "R", true, 0, "")
 	b.pdf.CellFormat(widths[len(widths)-1], 4, "0", "1", 0, "R", true, 0, "")
@@ -252,7 +246,6 @@ func (b *Bill) drawBillablesTable(headers []string, billables []BillableItem, wi
 	// Draw Total
 	// XXX Total just uses sub-total and assumes €0.00 tax for now...
 	b.pdf.Ln(4)
-	b.pdf.SetX(baseX)
 	b.drawBlanks(billables, widths)
 	b.pdf.SetFont(serifFont, "B", 10)
 	b.pdf.CellFormat(widths[len(widths)-2], 4, "Total", "1", 0, "R", true, 0, "")
@@ -261,14 +254,11 @@ func (b *Bill) drawBillablesTable(headers []string, billables []BillableItem, wi
 
 // drawBankDetails renders the table that contains the bank details.
 func (b *Bill) drawBankDetails() {
-	baseX := 8.0
 	b.pdf.Ln(20)
 	b.pdf.SetFont(serifFont, "", 14)
 	b.purpleText()
-	b.pdf.SetX(baseX)
 	b.pdf.Cell(40, 0, "Payment Details")
 	b.pdf.Ln(5)
-	b.pdf.SetX(baseX)
 	b.pdf.SetFont(serifFont, "", 8)
 	headers := []string{
 		"Pay By", "Bank Name", "Address", "Account Type (checking/Savings)",
@@ -278,7 +268,6 @@ func (b *Bill) drawBankDetails() {
 	b.pdf.SetDrawColor(64, 64, 64)
 	b.pdf.SetFillColor(247, 126, 25)
 	for i, v := range b.config.Bank.Strings() {
-		b.pdf.SetX(baseX)
 		b.whiteText()
 		b.pdf.SetFont(serifFont, "B", 10)
 		b.pdf.CellFormat(60, 5, headers[i], "1", 0, "R", true, 0, "")
