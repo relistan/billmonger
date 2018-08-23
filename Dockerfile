@@ -5,6 +5,7 @@ FROM golang:1.10 as build_stage
 RUN mkdir /app 
 ADD . /app/ 
 WORKDIR /app 
+RUN dep ensure
 RUN go build -o main . 
 
 # --------------------------------------
