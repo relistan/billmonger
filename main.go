@@ -34,12 +34,20 @@ func NewBill(config *BillingConfig) *Bill {
 	return bill
 }
 
-func (b *Bill) orangeText() {
-	b.pdf.SetTextColor(247, 126, 25)
+func (b *Bill) lightText() {
+	b.pdf.SetTextColor(
+		b.config.Colors.ColorLight.R,
+		b.config.Colors.ColorLight.G,
+		b.config.Colors.ColorLight.B,
+	)
 }
 
-func (b *Bill) purpleText() {
-	b.pdf.SetTextColor(68, 54, 152)
+func (b *Bill) darkText() {
+	b.pdf.SetTextColor(
+		b.config.Colors.ColorDark.R,
+		b.config.Colors.ColorDark.G,
+		b.config.Colors.ColorDark.B,
+	)
 }
 
 func (b *Bill) blackText() {
@@ -60,26 +68,26 @@ func (b *Bill) makeHeader() func() {
 
 		// Invoice Text
 		b.pdf.SetXY(140, 20)
-		b.purpleText()
+		b.darkText()
 		b.pdf.Cell(40, 0, "Invoice")
 
 		// Date and Invoice #
 		b.pdf.SetXY(140, 30)
-		b.purpleText()
+		b.darkText()
 		b.pdf.SetFont(serifFont, "", 12)
 		b.pdf.Cell(20, 0, "Date:")
-		b.orangeText()
+		b.lightText()
 		b.pdf.Cell(20, 0, now.EndOfMonth().Format("January 2, 2006"))
 
 		b.pdf.SetXY(140, 35)
-		b.purpleText()
+		b.darkText()
 		b.pdf.Cell(20, 0, "Invoice #:")
-		b.orangeText()
+		b.lightText()
 		b.pdf.Cell(20, 0, now.EndOfMonth().Format("Jan22006"))
 
 		// Biller Name, Address
 		b.pdf.SetXY(8, 30)
-		b.purpleText()
+		b.darkText()
 		b.pdf.SetFont(serifFont, "B", 14)
 		b.pdf.Cell(40, 0, b.config.Business.Person)
 
@@ -103,9 +111,9 @@ func (b *Bill) makeFooter() func() {
 		b.pdf.SetDrawColor(68, 54, 152)
 		b.pdf.Line(8, 280, 200, 280)
 		b.pdf.SetXY(8.0, 285)
-		b.purpleText()
+		b.darkText()
 		b.pdf.Cell(143, 0, b.config.Business.Name)
-		b.orangeText()
+		b.lightText()
 		b.pdf.Cell(40, 0, "Generated: "+time.Now().UTC().Format("2006-01-02 15:04:05"))
 	}
 }
@@ -247,15 +255,21 @@ func (b *Bill) drawBillablesTable(headers []string, billables []BillableItem, wi
 	b.pdf.Ln(4)
 	b.drawBlanks(billables, widths)
 	b.pdf.SetFont(serifFont, "B", 10)
-	b.pdf.CellFormat(widths[len(widths)-2], 4, "Total", "1", 0, "R", true, 0, "")
-	b.pdf.CellFormat(widths[len(widths)-1], 4, subTotalText, "1", 0, "R", true, 0, "")
+	y := b.pdf.GetY()
+	x := b.pdf.GetX()
+	b.pdf.CellFormat(widths[len(widths)-2], 6, "Total", "1", 0, "R", true, 0, "")
+	b.pdf.CellFormat(widths[len(widths)-1], 6, subTotalText, "1", 0, "R", true, 0, "")
+	x2 := b.pdf.GetX()
+
+	b.pdf.SetDrawColor(64, 64, 64)
+	b.pdf.Line(x, y, x2, y)
 }
 
 // drawBankDetails renders the table that contains the bank details.
 func (b *Bill) drawBankDetails() {
 	b.pdf.Ln(20)
-	b.pdf.SetFont(serifFont, "", 14)
-	b.purpleText()
+	b.pdf.SetFont(serifFont, "B", 14)
+	b.darkText()
 	b.pdf.Cell(40, 0, "Payment Details")
 	b.pdf.Ln(5)
 	b.pdf.SetFont(serifFont, "", 8)

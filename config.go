@@ -77,22 +77,30 @@ func (b *BankDetails) Strings() []string {
 	}
 }
 
+type Color struct {
+	R int
+	G int
+	B int
+}
+
+type BillColor struct {
+	ColorLight Color `yaml:"color_light"`
+	ColorDark  Color `yaml:"color_dark"`
+}
+
 type BillingConfig struct {
 	Business  *BusinessDetails `yaml:"business"`
 	Bill      *BillDetails     `yaml:"bill"`
 	BillTo    *BillToDetails   `yaml:"bill_to"`
 	Billables []BillableItem   `yaml:"billables"`
 	Bank      *BankDetails     `yaml:"bank"`
+	Colors    *BillColor       `yaml:"colors"`
 }
 
-// ParseConfig parses the YAML config file which contains the
-// settings for the bill we're going to process.
+// ParseConfig parses the YAML config file which contains the settings for the
+// bill we're going to process. It uses a simple FuncMap to template the text,
+// allowing the billing items to describe the current date range.
 func ParseConfig(filename string) (*BillingConfig, error) {
-	//raw, err := ioutil.ReadFile(filename)
-	//if err != nil {
-	//	return nil, err
-	//}
-
 	funcMap := template.FuncMap{
 		"endOfNextMonth": func() string {
 			return now.EndOfMonth().AddDate(0, 1, -1).Format("01/02/06")
@@ -110,9 +118,9 @@ func ParseConfig(filename string) (*BillingConfig, error) {
 
 	buf := bytes.NewBuffer(make([]byte, 0, 65535))
 	err = t.ExecuteTemplate(buf, path.Base(filename), nil)
-    if err != nil {
-        return nil, err
-    }
+	if err != nil {
+		return nil, err
+	}
 
 	var config BillingConfig
 	err = yaml.Unmarshal(buf.Bytes(), &config)
