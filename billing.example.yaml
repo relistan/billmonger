@@ -4,7 +4,7 @@ business:
  name:       "My Software Company"
  person:     "Billie Bob McAwesome"
  address:    "1234 Awesome Street, Funny Town, Postal 16, Ireland"
- image_file: "MySoftware.png"
+ image_file: "assets/MySoftware.png"
 
 # To whom the bill is to be presented
 bill_to:
