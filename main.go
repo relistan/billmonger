@@ -114,9 +114,8 @@ func (b *Bill) RenderToFile() error {
 	b.drawBillTo()
 
 	headers := []string{"Department", "Currency", "Payment Terms", "Due Date"}
-	values := []string{"Platform Eng", "EUR", "Net 30", now.EndOfMonth().AddDate(0, 1, -1).Format("01/02/06")}
 
-	b.drawBillTable(headers, values)
+	b.drawBillTable(headers, b.config.Bill.Strings())
 
 	headers = []string{"Qty", "Description", "Unit Price", "Line Total"}
 	widths := []float64{16, 125.5, 25, 25}
@@ -222,7 +221,7 @@ func (b *Bill) drawBillablesTable(headers []string, billables []BillableItem, wi
 	// Draw the billable items
 	for _, billable := range billables {
 		for i, val := range billable.Strings() {
-			b.pdf.CellFormat(widths[i], 4, val, "1", 0, "C", true, 0, "")
+			b.pdf.CellFormat(widths[i], 4, val, "1", 0, "R", true, 0, "")
 		}
 		subTotal += billable.Total()
 		b.pdf.Ln(4)

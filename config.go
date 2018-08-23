@@ -1,10 +1,14 @@
 package main
 
 import (
-	"io/ioutil"
+	"bytes"
+	"fmt"
+	"path"
 	"regexp"
 	"strconv"
+	"text/template"
 
+	"github.com/jinzhu/now"
 	"golang.org/x/text/language"
 	"golang.org/x/text/message"
 	"gopkg.in/yaml.v2"
@@ -22,6 +26,12 @@ type BillDetails struct {
 	Currency     string `yaml:"currency"`
 	PaymentTerms string `yaml:"payment_terms"`
 	DueDate      string `yaml:"due_date"`
+}
+
+func (b *BillDetails) Strings() []string {
+	return []string{
+		b.Department, b.Currency, b.PaymentTerms, b.DueDate,
+	}
 }
 
 type BillToDetails struct {
@@ -78,13 +88,34 @@ type BillingConfig struct {
 // ParseConfig parses the YAML config file which contains the
 // settings for the bill we're going to process.
 func ParseConfig(filename string) (*BillingConfig, error) {
-	raw, err := ioutil.ReadFile(filename)
-	if err != nil {
-		return nil, err
+	//raw, err := ioutil.ReadFile(filename)
+	//if err != nil {
+	//	return nil, err
+	//}
+
+	funcMap := template.FuncMap{
+		"endOfNextMonth": func() string {
+			return now.EndOfMonth().AddDate(0, 1, -1).Format("01/02/06")
+		},
+		"billingPeriod": func() string {
+			return now.BeginningOfMonth().Format("Jan 2, 2006") +
+				" - " + now.EndOfMonth().Format("Jan 2, 2006")
+		},
 	}
 
+	t, err := template.New("billing.yaml").Funcs(funcMap).ParseFiles(filename)
+	if err != nil {
+		return nil, fmt.Errorf("Error Parsing template '%s': %s", filename, err.Error())
+	}
+
+	buf := bytes.NewBuffer(make([]byte, 0, 65535))
+	err = t.ExecuteTemplate(buf, path.Base(filename), nil)
+    if err != nil {
+        return nil, err
+    }
+
 	var config BillingConfig
-	err = yaml.Unmarshal(raw, &config)
+	err = yaml.Unmarshal(buf.Bytes(), &config)
 	if err != nil {
 		return nil, err
 	}
