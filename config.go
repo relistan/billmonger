@@ -19,6 +19,8 @@ type BusinessDetails struct {
 	Person    string `yaml:"person"`
 	Address   string `yaml:"address"`
 	ImageFile string `yaml:"image_file"`
+	SansFont  string `yaml:"sans_font"`
+	SerifFont string `yaml:"serif_font"`
 }
 
 type BillDetails struct {
