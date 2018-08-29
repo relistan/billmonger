@@ -38,14 +38,39 @@ generate a [PDF file](assets/example.pdf) that looks like this:
 Configuration
 -------------
 
-Configuration is done in the `billing.yaml` file. Currently that's hardcoded,
-but will be CLI switchable soon. This describes the bill and the billables to
-be reported. It supports a couple of templating features that make reporting
-items easier. These are Go template functions and are to be put inside double
-curly braces anywhere in the YAML file. Interpretation of the template happens
-_before_ YAML processing. Examples:
+Configuration is done in the YAML file (`billing.yaml` by default). This
+describes the bill and the billables to be reported. It supports a couple of
+templating features that make reporting items easier. These are Go template
+functions and are to be put inside double curly braces anywhere in the YAML
+file. Interpretation of the template happens _before_ YAML processing.
+Examples:
 
  * `{{ endOfNexMonth }}`: This will be substituted with the end day of the
    month following the current month.
  * `{{ billingPeriod }}`: This will be substituted with the current month's
    beginning and end dates.
+
+CLI Flags
+---------
+
+`billmonger` currently takes a single CLI flag, to tell it which config file
+to use to run the bill. The default is `billing.yaml`, but you may specify
+otherwise like so:
+
+```bash
+$ ./billmonger -c my-other-config.yaml
+```
+
+You mask as for help on the command lin in the semi-standard way:
+
+```bash
+$ ./billmonger --help
+
+usage: billmonger [<flags>]
+
+Flags:
+      --help  Show context-sensitive help (also try --help-long and --help-man).
+  -c, --config-file="billing.yaml"  
+              The YAML config file to use
+
+```
