@@ -61,7 +61,7 @@ otherwise like so:
 $ ./billmonger -c my-other-config.yaml
 ```
 
-You mask as for help on the command lin in the semi-standard way:
+You may ask for help on the command line in the semi-standard way:
 
 ```bash
 $ ./billmonger --help
