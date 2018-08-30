@@ -9,15 +9,15 @@ import (
 )
 
 type Bill struct {
-	pdf       *gofpdf.Fpdf
-	config    *BillingConfig
+	pdf    *gofpdf.Fpdf
+	config *BillingConfig
 }
 
 // NewBill begins generating an A4-sized Bill
 func NewBill(config *BillingConfig) *Bill {
 	bill := &Bill{
-		pdf:       gofpdf.New("P", "mm", "A4", ""),
-		config:    config,
+		pdf:    gofpdf.New("P", "mm", "A4", ""),
+		config: config,
 	}
 
 	bill.pdf.SetHeaderFunc(bill.makeHeader())
@@ -84,31 +84,31 @@ func (b *Bill) makeHeader() func() {
 		// Invoice Text
 		b.pdf.SetXY(140, 20)
 		b.darkText()
-		b.pdf.Cell(40, 0, "Invoice")
+		b.text(40, 0, "Invoice")
 
 		// Date and Invoice #
 		b.pdf.SetXY(140, 30)
 		b.darkText()
 		b.pdf.SetFont(b.config.Business.SerifFont, "", 12)
-		b.pdf.Cell(20, 0, "Date:")
+		b.text(20, 0, "Date:")
 		b.lightText()
-		b.pdf.Cell(20, 0, now.EndOfMonth().Format("January 2, 2006"))
+		b.text(20, 0, now.EndOfMonth().Format("January 2, 2006"))
 
 		b.pdf.SetXY(140, 35)
 		b.darkText()
-		b.pdf.Cell(20, 0, "Invoice #:")
+		b.text(20, 0, "Invoice #:")
 		b.lightText()
-		b.pdf.Cell(20, 0, now.EndOfMonth().Format("Jan22006"))
+		b.text(20, 0, now.EndOfMonth().Format("Jan22006"))
 
 		// Biller Name, Address
 		b.pdf.SetXY(8, 30)
 		b.darkText()
 		b.pdf.SetFont(b.config.Business.SerifFont, "B", 14)
-		b.pdf.Cell(40, 0, b.config.Business.Person)
+		b.text(40, 0, b.config.Business.Person)
 
 		b.pdf.SetFont(b.config.Business.SerifFont, "", 10)
 		b.pdf.SetXY(8, 35)
-		b.pdf.Cell(40, 0, b.config.Business.Address)
+		b.text(40, 0, b.config.Business.Address)
 
 		// Line Break
 		b.pdf.Ln(10)
@@ -127,9 +127,9 @@ func (b *Bill) makeFooter() func() {
 		b.pdf.Line(8, 280, 200, 280)
 		b.pdf.SetXY(8.0, 285)
 		b.darkText()
-		b.pdf.Cell(143, 0, b.config.Business.Name)
+		b.text(143, 0, b.config.Business.Name)
 		b.lightText()
-		b.pdf.Cell(40, 0, "Generated: "+time.Now().UTC().Format("2006-01-02 15:04:05"))
+		b.text(40, 0, "Generated: "+time.Now().UTC().Format("2006-01-02 15:04:05"))
 	}
 }
 
@@ -163,21 +163,21 @@ func (b *Bill) drawBillTo() {
 	b.pdf.Ln(10)
 	b.pdf.Ln(10)
 
-	b.pdf.Cell(0, 0, "To: ")
+	b.text(0, 0, "To: ")
 	b.pdf.SetX(20)
-	b.pdf.Cell(0, 0, b.config.BillTo.Email)
+	b.text(0, 0, b.config.BillTo.Email)
 	b.pdf.Ln(5)
 	b.pdf.SetX(20)
-	b.pdf.Cell(0, 0, b.config.BillTo.Name)
+	b.text(0, 0, b.config.BillTo.Name)
 	b.pdf.Ln(5)
 	b.pdf.SetX(20)
-	b.pdf.Cell(0, 0, b.config.BillTo.Street)
+	b.text(0, 0, b.config.BillTo.Street)
 	b.pdf.Ln(5)
 	b.pdf.SetX(20)
-	b.pdf.Cell(0, 0, b.config.BillTo.CityStateZip)
+	b.text(0, 0, b.config.BillTo.CityStateZip)
 	b.pdf.Ln(5)
 	b.pdf.SetX(20)
-	b.pdf.Cell(0, 0, b.config.BillTo.Country)
+	b.text(0, 0, b.config.BillTo.Country)
 }
 
 // drawBillTable renders the summary table for the bill showing the
@@ -194,7 +194,7 @@ func (b *Bill) drawBillTable(headers []string, values []string) {
 	b.pdf.SetY(baseY)
 	for _, header := range headers {
 		width := float64(len(header)) * 4.9
-		b.pdf.CellFormat(width, 5, header, "1", 0, "C", true, 0, "")
+		b.textFormat(width, 5, header, "1", 0, "C", true, 0, "")
 	}
 
 	b.pdf.Ln(5)
@@ -203,7 +203,7 @@ func (b *Bill) drawBillTable(headers []string, values []string) {
 	b.pdf.SetFont(b.config.Business.SerifFont, "", 8)
 	for i, val := range values {
 		width := float64(len(headers[i])) * 4.9
-		b.pdf.CellFormat(width, 4, val, "1", 0, "L", true, 0, "")
+		b.textFormat(width, 4, val, "1", 0, "L", true, 0, "")
 	}
 
 }
@@ -213,7 +213,7 @@ func (b *Bill) drawBillTable(headers []string, values []string) {
 func (b *Bill) drawBlanks(billables []BillableItem, widths []float64) {
 	emptyFields := len(billables[0].Strings()) - 2
 	for i := 0; i < emptyFields; i++ {
-		b.pdf.CellFormat(widths[i], 4, "", "", 0, "C", true, 0, "")
+		b.textFormat(widths[i], 4, "", "", 0, "C", true, 0, "")
 	}
 }
 
@@ -230,7 +230,7 @@ func (b *Bill) drawBillablesTable(headers []string, billables []BillableItem, wi
 	baseY := b.pdf.GetY() + 10
 	b.pdf.SetY(baseY)
 	for i, header := range headers {
-		b.pdf.CellFormat(widths[i], 5, header, "1", 0, "C", true, 0, "")
+		b.textFormat(widths[i], 5, header, "1", 0, "C", true, 0, "")
 	}
 
 	b.pdf.Ln(5)
@@ -244,7 +244,7 @@ func (b *Bill) drawBillablesTable(headers []string, billables []BillableItem, wi
 	// Draw the billable items
 	for _, billable := range billables {
 		for i, val := range billable.Strings() {
-			b.pdf.CellFormat(widths[i], 4, val, "1", 0, "R", true, 0, "")
+			b.textFormat(widths[i], 4, val, "1", 0, "R", true, 0, "")
 		}
 		subTotal += billable.Total()
 		b.pdf.Ln(4)
@@ -256,14 +256,14 @@ func (b *Bill) drawBillablesTable(headers []string, billables []BillableItem, wi
 	b.pdf.Ln(2)
 	b.drawBlanks(billables, widths)
 	subTotalText := billables[0].Currency + " " + niceFloatStr(subTotal)
-	b.pdf.CellFormat(widths[len(widths)-2], 4, "Subtotal", "1", 0, "R", true, 0, "")
-	b.pdf.CellFormat(widths[len(widths)-1], 4, subTotalText, "1", 0, "R", true, 0, "")
+	b.textFormat(widths[len(widths)-2], 4, "Subtotal", "1", 0, "R", true, 0, "")
+	b.textFormat(widths[len(widths)-1], 4, subTotalText, "1", 0, "R", true, 0, "")
 
 	// Draw Tax
 	b.pdf.Ln(4)
 	b.drawBlanks(billables, widths)
-	b.pdf.CellFormat(widths[len(widths)-2], 4, "Tax", "1", 0, "R", true, 0, "")
-	b.pdf.CellFormat(widths[len(widths)-1], 4, "0", "1", 0, "R", true, 0, "")
+	b.textFormat(widths[len(widths)-2], 4, "Tax", "1", 0, "R", true, 0, "")
+	b.textFormat(widths[len(widths)-1], 4, "0", "1", 0, "R", true, 0, "")
 
 	// Draw Total
 	// XXX Total just uses sub-total and assumes €0.00 tax for now...
@@ -272,8 +272,8 @@ func (b *Bill) drawBillablesTable(headers []string, billables []BillableItem, wi
 	b.pdf.SetFont(b.config.Business.SerifFont, "B", 10)
 	y := b.pdf.GetY()
 	x := b.pdf.GetX()
-	b.pdf.CellFormat(widths[len(widths)-2], 6, "Total", "1", 0, "R", true, 0, "")
-	b.pdf.CellFormat(widths[len(widths)-1], 6, subTotalText, "1", 0, "R", true, 0, "")
+	b.textFormat(widths[len(widths)-2], 6, "Total", "1", 0, "R", true, 0, "")
+	b.textFormat(widths[len(widths)-1], 6, subTotalText, "1", 0, "R", true, 0, "")
 	x2 := b.pdf.GetX()
 
 	b.pdf.SetDrawColor(64, 64, 64)
@@ -285,7 +285,7 @@ func (b *Bill) drawBankDetails() {
 	b.pdf.Ln(20)
 	b.pdf.SetFont(b.config.Business.SerifFont, "B", 14)
 	b.darkText()
-	b.pdf.Cell(40, 0, "Payment Details")
+	b.text(40, 0, "Payment Details")
 	b.pdf.Ln(5)
 	b.pdf.SetFont(b.config.Business.SerifFont, "", 8)
 	headers := []string{
@@ -298,20 +298,21 @@ func (b *Bill) drawBankDetails() {
 	for i, v := range b.config.Bank.Strings() {
 		b.whiteText()
 		b.pdf.SetFont(b.config.Business.SerifFont, "B", 10)
-		b.pdf.CellFormat(60, 5, headers[i], "1", 0, "R", true, 0, "")
+		b.textFormat(60, 5, headers[i], "1", 0, "R", true, 0, "")
 		b.blackText()
 		b.pdf.SetFont(b.config.Business.SerifFont, "", 10)
-		b.pdf.CellFormat(100, 5, v, "1", 0, "L", false, 0, "")
+		b.textFormat(100, 5, v, "1", 0, "L", false, 0, "")
 		b.pdf.Ln(5)
 	}
 }
 
-// fixCurrencyChars maps Unicode chars to their equivalent in PDF.
-// This is necessary to prevent weird encoding issues.
-func (b *Bill) fixCurrencyChars() {
+func (b *Bill) text(x, y float64, txtStr string) {
 	unicodeToPDF := b.pdf.UnicodeTranslatorFromDescriptor("")
+	b.pdf.Cell(x, y, unicodeToPDF(txtStr))
+}
 
-	for i, billable := range b.config.Billables {
-		b.config.Billables[i].Currency = unicodeToPDF(billable.Currency)
-	}
+func (b *Bill) textFormat(w, h float64, txtStr string, borderStr string, ln int,
+	alignStr string, fill bool, link int, linkStr string) {
+	unicodeToPDF := b.pdf.UnicodeTranslatorFromDescriptor("")
+	b.pdf.CellFormat(w, h, unicodeToPDF(txtStr), borderStr, ln, alignStr, fill, link, linkStr)
 }
