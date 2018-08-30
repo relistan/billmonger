@@ -43,11 +43,6 @@ func main() {
 
 	bill := NewBill(config)
 
-	// Handle Unicode -> PDF translation for currency chars. This has
-	// to happen after showing the config in the terminal with
-	// rubberneck.
-	bill.fixCurrencyChars()
-
 	err = bill.RenderToFile()
 	if err != nil {
 		println(err.Error())
