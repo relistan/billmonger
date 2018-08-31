@@ -71,11 +71,12 @@ type BankDetails struct {
 	AccountType  string `yaml:"account_type"`
 	IBAN         string
 	SortCode     string `yaml:"sort_code"`
+	SWIFTBIC     string `yaml:"swift_bic"`
 }
 
 func (b *BankDetails) Strings() []string {
 	return []string{
-		b.TransferType, b.Name, b.Address, b.AccountType, b.IBAN, b.SortCode,
+		b.TransferType, b.Name, b.Address, b.AccountType, b.IBAN, b.SortCode, b.SWIFTBIC,
 	}
 }
 

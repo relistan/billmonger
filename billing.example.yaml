@@ -41,6 +41,7 @@ bank:
   account_type:  "Checking"
   iban:          "DE99 5555 5555 5555 5555 55"
   sort_code:     "12-12-12"
+  #swift_bic:     "ABCXYZ"
 
 # Branding colors to use on the bill, assumes a light color
 # and a dark color. If you use two dark colors, it will be ugly.
