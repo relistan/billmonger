@@ -79,41 +79,41 @@ func (b *Bill) lightFillColor() {
 func (b *Bill) makeHeader() func() {
 	return func() {
 		b.pdf.SetFont(b.config.Business.SansFont, "BI", 28)
-		b.pdf.ImageOptions(b.config.Business.ImageFile, 0, 0, 100, 0, false, gofpdf.ImageOptions{}, 0, "")
+		b.pdf.ImageOptions(b.config.Business.ImageFile, 0, 10, 100, 0, false, gofpdf.ImageOptions{}, 0, "")
 
 		// Invoice Text
-		b.pdf.SetXY(140, 20)
+		b.pdf.SetXY(140, 30)
 		b.darkText()
 		b.text(40, 0, "Invoice")
 
 		// Date and Invoice #
-		b.pdf.SetXY(140, 30)
+		b.pdf.SetXY(140, 40)
 		b.darkText()
 		b.pdf.SetFont(b.config.Business.SerifFont, "", 12)
 		b.text(20, 0, "Date:")
 		b.lightText()
 		b.text(20, 0, now.EndOfMonth().Format("January 2, 2006"))
 
-		b.pdf.SetXY(140, 35)
+		b.pdf.SetXY(140, 45)
 		b.darkText()
 		b.text(20, 0, "Invoice #:")
 		b.lightText()
 		b.text(20, 0, now.EndOfMonth().Format("Jan22006"))
 
 		// Biller Name, Address
-		b.pdf.SetXY(8, 30)
+		b.pdf.SetXY(8, 40)
 		b.darkText()
 		b.pdf.SetFont(b.config.Business.SerifFont, "B", 14)
 		b.text(40, 0, b.config.Business.Person)
 
 		b.pdf.SetFont(b.config.Business.SerifFont, "", 10)
-		b.pdf.SetXY(8, 35)
+		b.pdf.SetXY(8, 45)
 		b.text(40, 0, b.config.Business.Address)
 
 		// Line Break
 		b.pdf.Ln(10)
 		b.darkDrawColor()
-		b.pdf.Line(8, 40, 200, 40)
+		b.pdf.Line(8, 50, 200, 50)
 	}
 }
 
@@ -124,8 +124,8 @@ func (b *Bill) makeFooter() func() {
 	return func() {
 		b.pdf.Ln(10)
 		b.darkDrawColor()
-		b.pdf.Line(8, 280, 200, 280)
-		b.pdf.SetXY(8.0, 285)
+		b.pdf.Line(8, 275, 200, 275)
+		b.pdf.SetXY(8.0, 280)
 		b.darkText()
 		b.text(143, 0, b.config.Business.Name)
 		b.lightText()
