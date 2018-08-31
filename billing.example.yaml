@@ -35,13 +35,13 @@ billables:
 
 # Where to send the money!
 bank:
+  # Any fields you don't specify here, will be left entirely off
+  # the invoice. Some countries use sort codes and some SWIFT or
+  # BIC codes, for example. You might not have a bank address.
   transfer_type: "Wire"
   name:          "Acme Bank"
   address:       "-"
   account_type:  "Checking"
-  # Any fields you don't specify here, will be left entirely off
-  # the invoice. Some countries use sort codes and some SWIFT or
-  # BIC codes, for example.
   iban:          "DE99 5555 5555 5555 5555 55"
   sort_code:     "12-12-12"
   #swift_bic:     "ABCXYZ"
