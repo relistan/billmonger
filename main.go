@@ -5,6 +5,7 @@ import (
 
 	"gopkg.in/alecthomas/kingpin.v2"
 	"gopkg.in/relistan/rubberneck.v1"
+	"github.com/relistan/billmonger/invoice"
 )
 
 const (
@@ -22,7 +23,7 @@ func main() {
 	}
 	kingpin.Parse()
 
-	config, err := ParseConfig(*cli.ConfigFile)
+	config, err := invoice.ParseConfig(*cli.ConfigFile)
 	if err != nil {
 		println(err.Error())
 		os.Exit(1)
@@ -41,7 +42,7 @@ func main() {
 		config.Business.SerifFont = serifFont
 	}
 
-	bill := NewBill(config)
+	bill := invoice.NewBill(config)
 
 	err = bill.RenderToFile()
 	if err != nil {
