@@ -47,6 +47,8 @@ Examples:
 
  * `{{ endOfNexMonth }}`: This will be substituted with the end day of the
    month following the current month.
+ * `{{ endOfThisMonth }}`: This will be substituted with the end day of the
+   current month.
  * `{{ billingPeriod }}`: This will be substituted with the current month's
    beginning and end dates.
 

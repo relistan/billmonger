@@ -108,6 +108,9 @@ func ParseConfig(filename string) (*BillingConfig, error) {
 		"endOfNextMonth": func() string {
 			return now.EndOfMonth().AddDate(0, 1, -1).Format("01/02/06")
 		},
+		"endOfThisMonth": func() string {
+			return now.EndOfMonth().Format("01/02/06")
+		},
 		"billingPeriod": func() string {
 			return now.BeginningOfMonth().Format("Jan 2, 2006") +
 				" - " + now.EndOfMonth().Format("Jan 2, 2006")
