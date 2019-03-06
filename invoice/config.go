@@ -28,6 +28,7 @@ type BillDetails struct {
 	Currency     string `yaml:"currency"`
 	PaymentTerms string `yaml:"payment_terms"`
 	DueDate      string `yaml:"due_date"`
+	Date         string `yaml:"date"`
 }
 
 func (b *BillDetails) Strings() []string {
@@ -103,17 +104,19 @@ type BillingConfig struct {
 // ParseConfig parses the YAML config file which contains the settings for the
 // bill we're going to process. It uses a simple FuncMap to template the text,
 // allowing the billing items to describe the current date range.
-func ParseConfig(filename string) (*BillingConfig, error) {
+func ParseConfig(filename string, billingDate string) (*BillingConfig, error) {
+	billTime := now.New(now.MustParse(billingDate))
+
 	funcMap := template.FuncMap{
 		"endOfNextMonth": func() string {
-			return now.EndOfMonth().AddDate(0, 1, -1).Format("01/02/06")
+			return billTime.EndOfMonth().AddDate(0, 1, -1).Format("01/02/06")
 		},
 		"endOfThisMonth": func() string {
-			return now.EndOfMonth().Format("01/02/06")
+			return billTime.EndOfMonth().Format("01/02/06")
 		},
 		"billingPeriod": func() string {
-			return now.BeginningOfMonth().Format("Jan 2, 2006") +
-				" - " + now.EndOfMonth().Format("Jan 2, 2006")
+			return billTime.BeginningOfMonth().Format("Jan 2, 2006") +
+				" - " + billTime.EndOfMonth().Format("Jan 2, 2006")
 		},
 	}
 
@@ -133,6 +136,9 @@ func ParseConfig(filename string) (*BillingConfig, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	// Set the date we'll bill on
+	config.Bill.Date = billingDate
 
 	return &config, nil
 }

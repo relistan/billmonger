@@ -20,6 +20,10 @@ func NewBill(config *BillingConfig) *Bill {
 		config: config,
 	}
 
+	if len(config.Bill.Date) < 1 {
+		config.Bill.Date = time.Now().String()
+	}
+
 	bill.pdf.SetHeaderFunc(bill.makeHeader())
 	bill.pdf.SetFooterFunc(bill.makeFooter())
 	bill.pdf.AddPage()
@@ -78,6 +82,9 @@ func (b *Bill) lightFillColor() {
 // the closure.
 func (b *Bill) makeHeader() func() {
 	return func() {
+		// It's safe to MustParse here because we validated CLI args
+		billTime := now.New(now.MustParse(b.config.Bill.Date))
+
 		b.pdf.SetFont(b.config.Business.SansFont, "BI", 28)
 		b.pdf.ImageOptions(b.config.Business.ImageFile, 0, 10, 100, 0, false, gofpdf.ImageOptions{}, 0, "")
 
@@ -92,13 +99,13 @@ func (b *Bill) makeHeader() func() {
 		b.pdf.SetFont(b.config.Business.SerifFont, "", 12)
 		b.text(20, 0, "Date:")
 		b.lightText()
-		b.text(20, 0, now.EndOfMonth().Format("January 2, 2006"))
+		b.text(20, 0, billTime.EndOfMonth().Format("January 2, 2006"))
 
 		b.pdf.SetXY(140, 45)
 		b.darkText()
 		b.text(20, 0, "Invoice #:")
 		b.lightText()
-		b.text(20, 0, now.EndOfMonth().Format("Jan22006"))
+		b.text(20, 0, billTime.EndOfMonth().Format("Jan22006"))
 
 		// Biller Name, Address
 		b.pdf.SetXY(8, 40)
@@ -146,8 +153,11 @@ func (b *Bill) RenderToFile() error {
 	b.drawBillablesTable(headers, b.config.Billables, widths)
 	b.drawBankDetails()
 
+	// It's safe to MustParse here because we validate args earlier
+	billTime := now.New(now.MustParse(b.config.Bill.Date))
+
 	outFileName := b.config.Business.Person + " " +
-		strings.ToUpper(now.EndOfMonth().Format("Jan022006")) + ".pdf"
+		strings.ToUpper(billTime.EndOfMonth().Format("Jan022006")) + ".pdf"
 
 	err := b.pdf.OutputFileAndClose(outFileName)
 	if err != nil {
