@@ -72,7 +72,8 @@ usage: billmonger [<flags>]
 
 Flags:
       --help  Show context-sensitive help (also try --help-long and --help-man).
-  -c, --config-file="billing.yaml"  
+  -c, --config-file="billing.yaml"
               The YAML config file to use
-
+  -b, --billing-date="2019-03-06"
+              The date to assume the bill is written on
 ```
