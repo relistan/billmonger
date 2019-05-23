@@ -45,7 +45,7 @@ functions and are to be put inside double curly braces anywhere in the YAML
 file. Interpretation of the template happens _before_ YAML processing.
 Examples:
 
- * `{{ endOfNexMonth }}`: This will be substituted with the end day of the
+ * `{{ endOfNextMonth }}`: This will be substituted with the end day of the
    month following the current month.
  * `{{ endOfThisMonth }}`: This will be substituted with the end day of the
    current month.
