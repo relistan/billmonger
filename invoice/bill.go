@@ -1,6 +1,8 @@
 package invoice
 
 import (
+	"fmt"
+	"math/rand"
 	"strings"
 	"time"
 
@@ -85,31 +87,34 @@ func (b *Bill) makeHeader() func() {
 		// It's safe to MustParse here because we validated CLI args
 		billTime := now.New(now.MustParse(b.config.Bill.Date))
 
-		b.pdf.SetFont(b.config.Business.SansFont, "BI", 28)
-		b.pdf.ImageOptions(b.config.Business.ImageFile, 0, 10, 100, 0, false, gofpdf.ImageOptions{}, 0, "")
-
+		b.pdf.SetFont("Helvetica", "B", 28)
+		//b.pdf.ImageOptions(b.config.Business.ImageFile, 0, 10, 100, 0, false, gofpdf.ImageOptions{}, 0, "")
+		b.pdf.SetXY(6, 30)
+		b.blackText()
+		b.text(60, 0, "Gozyra AB")
 		// Invoice Text
+		b.pdf.SetFont("Helvetica", "", 28)
 		b.pdf.SetXY(140, 30)
-		b.darkText()
+		b.blackText()
 		b.text(40, 0, "Invoice")
 
 		// Date and Invoice #
 		b.pdf.SetXY(140, 40)
-		b.darkText()
+		b.blackText()
 		b.pdf.SetFont(b.config.Business.SerifFont, "", 12)
 		b.text(20, 0, "Date:")
-		b.lightText()
+		b.blackText()
 		b.text(20, 0, billTime.EndOfMonth().Format("January 2, 2006"))
 
 		b.pdf.SetXY(140, 45)
-		b.darkText()
+		b.blackText()
 		b.text(20, 0, "Invoice #:")
-		b.lightText()
-		b.text(20, 0, billTime.EndOfMonth().Format("Jan22006"))
+		b.blackText()
+		b.text(20, 0, fmt.Sprintf("%v", rand.Intn(1000000000)))
 
 		// Biller Name, Address
 		b.pdf.SetXY(8, 40)
-		b.darkText()
+		b.blackText()
 		b.pdf.SetFont(b.config.Business.SerifFont, "B", 14)
 		b.text(40, 0, b.config.Business.Person)
 
@@ -133,9 +138,9 @@ func (b *Bill) makeFooter() func() {
 		b.darkDrawColor()
 		b.pdf.Line(8, 275, 200, 275)
 		b.pdf.SetXY(8.0, 280)
-		b.darkText()
+		b.blackText()
 		b.text(143, 0, b.config.Business.Name)
-		b.lightText()
+		b.blackText()
 		b.text(40, 0, "Generated: "+time.Now().UTC().Format("2006-01-02 15:04:05"))
 	}
 }
@@ -145,7 +150,7 @@ func (b *Bill) RenderToFile() error {
 
 	headers := []string{"Department", "Currency", "Payment Terms", "Due Date"}
 
-	b.drawBillTable(headers, b.config.Bill.Strings())
+	b.drawBillTerms(headers, b.config.Bill.Strings())
 
 	headers = []string{"Qty", "Description", "Unit Price", "Line Total"}
 	widths := []float64{16, 125.5, 25, 25}
@@ -192,6 +197,22 @@ func (b *Bill) drawBillTo() {
 
 // drawBillTable renders the summary table for the bill showing the
 // department, currency, and terms.
+func (b *Bill) drawBillTerms(labels []string, values []string) {
+	b.pdf.SetFillColor(255, 0, 0)
+	b.blackText()
+	b.pdf.SetDrawColor(64, 64, 64)
+	b.lightFillColor()
+	b.pdf.SetLineWidth(0.3)
+	b.pdf.SetFont(b.config.Business.SerifFont, "B", 10)
+	baseY := b.pdf.GetY() + 10
+	b.pdf.SetY(baseY)
+	for _, label := range labels {
+		width := float64(len(label)) * 4.9
+		b.textFormat(width, 5, label, "1", 0, "C", true, 0, "")
+	}
+}
+
+
 func (b *Bill) drawBillTable(headers []string, values []string) {
 	b.pdf.SetFillColor(255, 0, 0)
 	b.whiteText()
@@ -231,7 +252,7 @@ func (b *Bill) drawBlanks(billables []BillableItem, widths []float64) {
 // for the billable items described in the YAML file.
 func (b *Bill) drawBillablesTable(headers []string, billables []BillableItem, widths []float64) {
 	b.pdf.SetFillColor(255, 0, 0)
-	b.whiteText()
+	b.blackText()
 	b.pdf.SetDrawColor(64, 64, 64)
 	b.lightFillColor()
 	b.pdf.SetLineWidth(0.3)
@@ -265,15 +286,17 @@ func (b *Bill) drawBillablesTable(headers []string, billables []BillableItem, wi
 	b.pdf.SetFont(b.config.Business.SerifFont, "", 8)
 	b.pdf.Ln(2)
 	b.drawBlanks(billables, widths)
-	subTotalText := billables[0].Currency + " " + niceFloatStr(subTotal)
+	subTotalText := " " + niceFloatStr(subTotal)
 	b.textFormat(widths[len(widths)-2], 4, "Subtotal", "1", 0, "R", true, 0, "")
 	b.textFormat(widths[len(widths)-1], 4, subTotalText, "1", 0, "R", true, 0, "")
 
 	// Draw Tax
 	b.pdf.Ln(4)
 	b.drawBlanks(billables, widths)
-	b.textFormat(widths[len(widths)-2], 4, "Tax", "1", 0, "R", true, 0, "")
-	b.textFormat(widths[len(widths)-1], 4, "0", "1", 0, "R", true, 0, "")
+	tax := subTotal * 0.25
+	taxText := " " + niceFloatStr(tax)
+	b.textFormat(widths[len(widths)-2], 4, "VAT", "1", 0, "R", true, 0, "")
+	b.textFormat(widths[len(widths)-1], 4, taxText, "1", 0, "R", true, 0, "")
 
 	// Draw Total
 	// XXX Total just uses sub-total and assumes €0.00 tax for now...
@@ -282,8 +305,10 @@ func (b *Bill) drawBillablesTable(headers []string, billables []BillableItem, wi
 	b.pdf.SetFont(b.config.Business.SerifFont, "B", 10)
 	y := b.pdf.GetY()
 	x := b.pdf.GetX()
+	total := tax + subTotal
+	totalText := billables[0].Currency + " " + niceFloatStr(total)
 	b.textFormat(widths[len(widths)-2], 6, "Total", "1", 0, "R", true, 0, "")
-	b.textFormat(widths[len(widths)-1], 6, subTotalText, "1", 0, "R", true, 0, "")
+	b.textFormat(widths[len(widths)-1], 6, totalText, "1", 0, "R", true, 0, "")
 	x2 := b.pdf.GetX()
 
 	b.pdf.SetDrawColor(64, 64, 64)
@@ -294,13 +319,13 @@ func (b *Bill) drawBillablesTable(headers []string, billables []BillableItem, wi
 func (b *Bill) drawBankDetails() {
 	b.pdf.Ln(20)
 	b.pdf.SetFont(b.config.Business.SerifFont, "B", 14)
-	b.darkText()
+	b.blackText()
 	b.text(40, 0, "Payment Details")
 	b.pdf.Ln(5)
 	b.pdf.SetFont(b.config.Business.SerifFont, "", 8)
 	headers := []string{
-		"Pay By", "Bank Name", "Address", "Account Type (checking/Savings)",
-		"IBAN (international)", "Sort Code (international)", "SWIFT/BIC (international)",
+		"Till plusgiro",
+		"Betalningsmottagare",
 	}
 
 	b.pdf.SetDrawColor(64, 64, 64)
@@ -309,7 +334,7 @@ func (b *Bill) drawBankDetails() {
 		if v == "" {
 			continue
 		}
-		b.whiteText()
+		b.blackText()
 		b.pdf.SetFont(b.config.Business.SerifFont, "B", 10)
 		b.textFormat(60, 5, headers[i], "1", 0, "R", true, 0, "")
 		b.blackText()

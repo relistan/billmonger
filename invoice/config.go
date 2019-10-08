@@ -66,18 +66,12 @@ func (b *BillableItem) Strings() []string {
 }
 
 type BankDetails struct {
-	TransferType string `yaml:"transfer_type"`
-	Name         string
-	Address      string
-	AccountType  string `yaml:"account_type"`
-	IBAN         string
-	SortCode     string `yaml:"sort_code"`
-	SWIFTBIC     string `yaml:"swift_bic"`
+	PlusGiro     string `yaml:"plusgiro"`
+	Payee 		 string `yaml:"payee"`
 }
 
 func (b *BankDetails) Strings() []string {
-	return []string{
-		b.TransferType, b.Name, b.Address, b.AccountType, b.IBAN, b.SortCode, b.SWIFTBIC,
+	return []string{b.PlusGiro, b.Payee,
 	}
 }
 
@@ -108,15 +102,18 @@ func ParseConfig(filename string, billingDate string) (*BillingConfig, error) {
 	billTime := now.New(now.MustParse(billingDate))
 
 	funcMap := template.FuncMap{
+		"now": func() string {
+			return billTime.Format("01-02-06")
+		},
 		"endOfNextMonth": func() string {
-			return billTime.EndOfMonth().AddDate(0, 1, -1).Format("01/02/06")
+			return billTime.EndOfMonth().AddDate(0, 1, -1).Format("02-01-06")
 		},
 		"endOfThisMonth": func() string {
-			return billTime.EndOfMonth().Format("01/02/06")
+			return billTime.EndOfMonth().Format("02-01-06")
 		},
 		"billingPeriod": func() string {
-			return billTime.BeginningOfMonth().Format("Jan 2, 2006") +
-				" - " + billTime.EndOfMonth().Format("Jan 2, 2006")
+			return billTime.BeginningOfMonth().Format("02-01-06") +
+				" - " + billTime.EndOfMonth().Format("02-01-06")
 		},
 	}
 
@@ -146,7 +143,7 @@ func ParseConfig(filename string, billingDate string) (*BillingConfig, error) {
 // niceFloatStr takes a float and gives back a monetary, human-formatted
 // value.
 func niceFloatStr(f float64) string {
-	r := regexp.MustCompile("[0-9,]+.[0-9]{2}")
+	r := regexp.MustCompile("(-?)[0-9,]+.[0-9]{2}")
 	p := message.NewPrinter(language.English)
 	results := r.FindAllString(p.Sprintf("%f", f), 1)
 
