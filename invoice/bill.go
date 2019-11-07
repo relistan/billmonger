@@ -93,7 +93,7 @@ func (b *Bill) makeHeader() func() {
 		b.blackText()
 		b.text(60, 0, "Gozyra AB")
 		// Invoice Text
-		b.pdf.SetFont("Helvetica", "", 28)
+
 		b.pdf.SetXY(140, 30)
 		b.blackText()
 		b.text(40, 0, "Invoice")
@@ -102,30 +102,21 @@ func (b *Bill) makeHeader() func() {
 		b.pdf.SetXY(140, 40)
 		b.blackText()
 		b.pdf.SetFont(b.config.Business.SerifFont, "", 12)
-		b.text(20, 0, "Date:")
+		b.text(25, 0, "Date:")
 		b.blackText()
-		b.text(20, 0, billTime.EndOfMonth().Format("January 2, 2006"))
+		b.text(25, 0, billTime.Format("2006-01-02"))
 
 		b.pdf.SetXY(140, 45)
 		b.blackText()
-		b.text(20, 0, "Invoice #:")
+		b.text(25, 0, "Reference:")
 		b.blackText()
-		b.text(20, 0, fmt.Sprintf("%v", rand.Intn(1000000000)))
-
-		// Biller Name, Address
-		b.pdf.SetXY(8, 40)
+		b.text(25, 0, fmt.Sprintf("%v", rand.Intn(1000000000)))
+		b.pdf.SetXY(140, 50)
 		b.blackText()
-		b.pdf.SetFont(b.config.Business.SerifFont, "B", 14)
-		b.text(40, 0, b.config.Business.Person)
+		b.text(25, 0, "Förfallodag:")
+		b.blackText()
+		b.text(25, 0, fmt.Sprintf("%v", time.Now().Add(time.Hour *24).Format("2006-01-02")))
 
-		b.pdf.SetFont(b.config.Business.SerifFont, "", 10)
-		b.pdf.SetXY(8, 45)
-		b.text(40, 0, b.config.Business.Address)
-
-		// Line Break
-		b.pdf.Ln(10)
-		b.darkDrawColor()
-		b.pdf.Line(8, 50, 200, 50)
 	}
 }
 
@@ -147,13 +138,8 @@ func (b *Bill) makeFooter() func() {
 
 func (b *Bill) RenderToFile() error {
 	b.drawBillTo()
-
-	headers := []string{"Department", "Currency", "Payment Terms", "Due Date"}
-
-	b.drawBillTerms(headers, b.config.Bill.Strings())
-
-	headers = []string{"Qty", "Description", "Unit Price", "Line Total"}
-	widths := []float64{16, 125.5, 25, 25}
+	headers := []string{"Qty", "Description", "Unit Price", "Period", "Line Total"}
+	widths := []float64{16, 100.5, 25, 25, 25}
 
 	b.drawBillablesTable(headers, b.config.Billables, widths)
 	b.drawBankDetails()
@@ -172,27 +158,42 @@ func (b *Bill) RenderToFile() error {
 	return nil
 }
 
+
 // drawBillTo renders the Bill To part of the bill.
 func (b *Bill) drawBillTo() {
 	b.blackText()
 	b.pdf.Ln(10)
 	b.pdf.Ln(10)
 
-	b.text(0, 0, "To: ")
-	b.pdf.SetX(20)
+
+	b.pdf.SetX(140)
 	b.text(0, 0, b.config.BillTo.Email)
+	b.pdf.SetX(10)
+	b.text(0, 0, fmt.Sprintf("Organisationsnr %v",b.config.Business.OrgNo))
 	b.pdf.Ln(5)
-	b.pdf.SetX(20)
+	b.pdf.SetX(140)
 	b.text(0, 0, b.config.BillTo.Name)
+	b.pdf.SetX(10)
+	b.text(0, 0, fmt.Sprintf("Besökadress     %v", b.config.Business.Address))
 	b.pdf.Ln(5)
-	b.pdf.SetX(20)
+	b.pdf.SetX(140)
 	b.text(0, 0, b.config.BillTo.Street)
+	b.pdf.SetX(10)
+	b.text(0, 0, fmt.Sprintf("Postadress      %v", b.config.Business.Paddress))
 	b.pdf.Ln(5)
-	b.pdf.SetX(20)
+	b.pdf.SetX(140)
 	b.text(0, 0, b.config.BillTo.CityStateZip)
+	b.pdf.SetX(10)
+	b.text(0, 0, fmt.Sprintf("Telefon			%s", b.config.Business.Telephone))
 	b.pdf.Ln(5)
-	b.pdf.SetX(20)
+	b.pdf.SetX(140)
 	b.text(0, 0, b.config.BillTo.Country)
+	b.pdf.SetX(10)
+	b.text(0, 0, fmt.Sprintf("E-post			%s", b.config.Business.Email))
+	b.pdf.Ln(5)
+	b.pdf.SetX(10)
+	b.text(0, 0, fmt.Sprintf("VATno			%s", b.config.Business.Vat))
+	b.pdf.Ln(5)
 }
 
 // drawBillTable renders the summary table for the bill showing the

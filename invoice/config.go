@@ -17,10 +17,14 @@ import (
 type BusinessDetails struct {
 	Name      string `yaml:"name"`
 	Person    string `yaml:"person"`
-	Address   string `yaml:"address"`
-	ImageFile string `yaml:"image_file"`
 	SansFont  string `yaml:"sans_font"`
 	SerifFont string `yaml:"serif_font"`
+	Address   string `yaml:"address"`
+	OrgNo	  string `yaml:"orgnumber"`
+	Paddress  string `yaml:"postaddress"`
+	Telephone string `yaml:"telephone"`
+	Email 	  string `yaml:"email"`
+	Vat		  string `yaml:"vat"`
 }
 
 type BillDetails struct {
@@ -48,6 +52,7 @@ type BillToDetails struct {
 type BillableItem struct {
 	Quantity    float64
 	Description string
+	Period 		string
 	UnitPrice   float64 `yaml:"unit_price"`
 	Currency    string
 }
@@ -61,6 +66,7 @@ func (b *BillableItem) Strings() []string {
 		strconv.FormatFloat(b.Quantity, 'f', 2, 64),
 		b.Description,
 		b.Currency + " " + niceFloatStr(b.UnitPrice),
+		b.Period,
 		b.Currency + " " + niceFloatStr(b.Total()),
 	}
 }
