@@ -260,6 +260,11 @@ func (b *Bill) drawBillablesTable(headers []string, billables []BillableItem, wi
 		b.pdf.Ln(4)
 	}
 
+	// Calculate tax
+	// TODO: Make this configurable.
+	tax := subTotal * 0.1
+	total := subTotal + tax
+
 	// Draw the Sub-Total
 	b.pdf.SetDrawColor(255, 255, 255)
 	b.pdf.SetFont(b.config.Business.SerifFont, "", 8)
@@ -272,18 +277,19 @@ func (b *Bill) drawBillablesTable(headers []string, billables []BillableItem, wi
 	// Draw Tax
 	b.pdf.Ln(4)
 	b.drawBlanks(billables, widths)
-	b.textFormat(widths[len(widths)-2], 4, "Tax", "1", 0, "R", true, 0, "")
-	b.textFormat(widths[len(widths)-1], 4, "0", "1", 0, "R", true, 0, "")
+	taxText := billables[0].Currency + " " + niceFloatStr(tax)
+	b.textFormat(widths[len(widths)-2], 4, "GST", "1", 0, "R", true, 0, "")
+	b.textFormat(widths[len(widths)-1], 4, taxText, "1", 0, "R", true, 0, "")
 
 	// Draw Total
-	// XXX Total just uses sub-total and assumes €0.00 tax for now...
 	b.pdf.Ln(4)
 	b.drawBlanks(billables, widths)
 	b.pdf.SetFont(b.config.Business.SerifFont, "B", 10)
 	y := b.pdf.GetY()
 	x := b.pdf.GetX()
+	totalText := billables[0].Currency + " " + niceFloatStr(total)
 	b.textFormat(widths[len(widths)-2], 6, "Total", "1", 0, "R", true, 0, "")
-	b.textFormat(widths[len(widths)-1], 6, subTotalText, "1", 0, "R", true, 0, "")
+	b.textFormat(widths[len(widths)-1], 6, totalText, "1", 0, "R", true, 0, "")
 	x2 := b.pdf.GetX()
 
 	b.pdf.SetDrawColor(64, 64, 64)
