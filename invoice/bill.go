@@ -150,7 +150,7 @@ func (b *Bill) RenderToFile() error {
 	headers = []string{"Qty", "Description", "Unit Price", "Line Total"}
 	widths := []float64{16, 125.5, 25, 25}
 
-	b.drawBillablesTable(headers, b.config.Billables, widths)
+	b.drawBillablesTable(headers, b.config.Billables, b.config.Tax, widths)
 	b.drawBankDetails()
 
 	// It's safe to MustParse here because we validate args earlier
@@ -229,7 +229,7 @@ func (b *Bill) drawBlanks(billables []BillableItem, widths []float64) {
 
 // drawBillableaTable renders the table containing one line each
 // for the billable items described in the YAML file.
-func (b *Bill) drawBillablesTable(headers []string, billables []BillableItem, widths []float64) {
+func (b *Bill) drawBillablesTable(headers []string, billables []BillableItem, taxDetails *TaxDetails, widths []float64) {
 	b.pdf.SetFillColor(255, 0, 0)
 	b.whiteText()
 	b.pdf.SetDrawColor(64, 64, 64)
@@ -261,8 +261,7 @@ func (b *Bill) drawBillablesTable(headers []string, billables []BillableItem, wi
 	}
 
 	// Calculate tax
-	// TODO: Make this configurable.
-	tax := subTotal * 0.1
+	tax := subTotal * taxDetails.Percentage
 	total := subTotal + tax
 
 	// Draw the Sub-Total
