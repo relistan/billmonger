@@ -77,3 +77,12 @@ Flags:
   -b, --billing-date="2019-03-06"
               The date to assume the bill is written on
 ```
+
+Building it/Contributing
+------------------------
+
+To make changes (and build it and test it) you need to ...
+
+* make the changes and then ...
+* run `docker build . --tag billmonger` and then ...
+* run `docker run . -c
