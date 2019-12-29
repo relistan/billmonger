@@ -67,22 +67,28 @@ You may ask for help on the command line in the semi-standard way:
 
 ```bash
 $ ./billmonger --help
-
 usage: billmonger [<flags>]
 
 Flags:
-      --help  Show context-sensitive help (also try --help-long and --help-man).
+      --help            Show context-sensitive help (also try --help-long and
+                        --help-man).
   -c, --config-file="billing.yaml"
-              The YAML config file to use
-  -b, --billing-date="2019-03-06"
-              The date to assume the bill is written on
+                        The YAML config file to use
+  -b, --billing-date="2019-12-29"
+                        The date to assume the bill is written on
+  -o, --output-dir="."  The output directory to use
+  -a, --assets-dir="."  The assets directory to use
 ```
 
-Building it/Contributing
-------------------------
+Using docker
+------------
 
-To make changes (and build it and test it) you need to ...
+To build it and run it with docker you need to ...
 
 * make the changes and then ...
 * run `docker build . --tag billmonger` and then ...
-* run `docker run . -c
+* run `docker run --volume ${PWD}/billmonger/billings:/billings --volume ${PWD}/billmonger/assets:/assets billmonger --output-dir /billings --assets-dir /assets --config-file /billings/billing.example.yaml`
+
+Note: The config file needs to be in a mounted dir (e.g. billings).
+
+Note: To use the container in your environment you need to mount/configure the billings and assets dirs and you probably want to alias the docker run command (e.g. `alias='docker run --volume ${PWD}/billmonger/billings:/billings --volume ${PWD}/billmonger/assets:/assets billmonger --output-dir /billings --assets-dir /assets'`. With that you can run `billmonger --config-file /billings/billing.example.yaml`

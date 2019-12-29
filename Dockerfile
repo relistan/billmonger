@@ -14,6 +14,5 @@ RUN CGO_ENABLED=0 go build -a -ldflags '-extldflags "-static"'
 # Production Container
 # --------------------------------------
 FROM scratch
-COPY assets /
 COPY --from=build_stage /go/src/github.com/relistan/billmonger/billmonger /
 ENTRYPOINT ["/billmonger"]

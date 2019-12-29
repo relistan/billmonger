@@ -86,7 +86,7 @@ func (b *Bill) makeHeader() func() {
 		billTime := now.New(now.MustParse(b.config.Bill.Date))
 
 		b.pdf.SetFont(b.config.Business.SansFont, "BI", 28)
-		b.pdf.ImageOptions(b.config.Business.ImageFile, 0, 10, 100, 0, false, gofpdf.ImageOptions{}, 0, "")
+		b.pdf.ImageOptions(b.config.AssetsDir + "/" + b.config.Business.ImageFile, 0, 10, 100, 0, false, gofpdf.ImageOptions{}, 0, "")
 
 		// Invoice Text
 		b.pdf.SetXY(140, 30)
