@@ -1,4 +1,5 @@
 *.swp
 *.swo
 vendor/
-billings/*.pdf
+invoices/*.pdf
+billing.yaml

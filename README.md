@@ -80,15 +80,15 @@ Flags:
   -a, --assets-dir="."  The assets directory to use
 ```
 
-Using docker
+Using Docker
 ------------
 
-To build it and run it with docker you need to ...
+To build it and run it directly from a Docker container you need to:
 
 * make the changes and then ...
 * run `docker build . --tag billmonger` and then ...
-* run `docker run --volume ${PWD}/billmonger/billings:/billings --volume ${PWD}/billmonger/assets:/assets billmonger --output-dir /billings --assets-dir /assets --config-file /billings/billing.example.yaml`
+* run `docker run --volume ${PWD}/billmonger/invoices:/invoices --volume ${PWD}/billmonger/assets:/assets billmonger --output-dir /invoices --assets-dir /assets --config-file /invoices/billing.example.yaml`
 
-Note: The config file needs to be in a mounted dir (e.g. billings).
+Note: The config file needs to be in a mounted dir (e.g. invoices).
 
-Note: To use the container in your environment you need to mount/configure the billings and assets dirs and you probably want to alias the docker run command (e.g. `alias='docker run --volume ${PWD}/billmonger/billings:/billings --volume ${PWD}/billmonger/assets:/assets billmonger --output-dir /billings --assets-dir /assets'`. With that you can run `billmonger --config-file /billings/billing.example.yaml`
+Note: To use the container in your environment you need to mount/configure the invoices and assets dirs and you probably want to alias the docker run command (e.g. `alias='docker run --volume ${PWD}/billmonger/invoices:/invoices --volume ${PWD}/billmonger/assets:/assets billmonger --output-dir /invoices --assets-dir /assets'`. With that you can run `billmonger --config-file /invoices/billing.example.yaml`
