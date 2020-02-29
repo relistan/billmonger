@@ -86,7 +86,7 @@ func (b *Bill) makeHeader() func() {
 		billTime := now.New(now.MustParse(b.config.Bill.Date))
 
 		b.pdf.SetFont(b.config.Business.SansFont, "BI", 28)
-		b.pdf.ImageOptions(b.config.Business.ImageFile, 0, 10, 100, 0, false, gofpdf.ImageOptions{}, 0, "")
+		b.pdf.ImageOptions(b.config.AssetsDir + "/" + b.config.Business.ImageFile, 0, 10, 100, 0, false, gofpdf.ImageOptions{}, 0, "")
 
 		// Invoice Text
 		b.pdf.SetXY(140, 30)
@@ -156,7 +156,7 @@ func (b *Bill) RenderToFile() error {
 	// It's safe to MustParse here because we validate args earlier
 	billTime := now.New(now.MustParse(b.config.Bill.Date))
 
-	outFileName := b.config.Business.Person + " " +
+	outFileName := b.config.OutputDir + "/" + b.config.Business.Person + " " +
 		strings.ToUpper(billTime.EndOfMonth().Format("Jan022006")) + ".pdf"
 
 	err := b.pdf.OutputFileAndClose(outFileName)

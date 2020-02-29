@@ -67,13 +67,42 @@ You may ask for help on the command line in the semi-standard way:
 
 ```bash
 $ ./billmonger --help
-
 usage: billmonger [<flags>]
 
 Flags:
-      --help  Show context-sensitive help (also try --help-long and --help-man).
+      --help            Show context-sensitive help (also try --help-long and
+                        --help-man).
   -c, --config-file="billing.yaml"
-              The YAML config file to use
-  -b, --billing-date="2019-03-06"
-              The date to assume the bill is written on
+                        The YAML config file to use
+  -b, --billing-date="2019-12-29"
+                        The date to assume the bill is written on
+  -o, --output-dir="."  The output directory to use
+  -a, --assets-dir="."  The assets directory to use
 ```
+
+Using Docker
+------------
+You can run Billmonger from the command line. But some folks have
+found that it's useful to run it from a Docker container directly.
+This is also supported! Here are the steps in order to do that.
+To build it and run it directly from a Docker container you need to:
+
+The following assumes that you have a directory in your current path
+called `./billmonger/invoices` where you would like to output PDF files
+from Billmonger. You can substitute this for any other local path 
+that is convenient.
+
+We will also need to be able to mount the config file from our local 
+filesystem into the Docker container. In the example below this file
+also lives in `./billmonger/invoices`
+
+Similarly, we will want to mount assents like the logo files from a
+local directory. This is assumed to be `./billmonger/assets` in  this
+example.
+
+* run `docker build . --tag billmonger` and then ...
+* run `docker run --volume ${PWD}/billmonger/invoices:/invoices --volume ${PWD}/billmonger/assets:/assets billmonger --output-dir /invoices --assets-dir /assets --config-file /invoices/billing.example.yaml`
+
+Note: The config file needs to be in a mounted dir (e.g. invoices).
+
+Note: To use the container in your environment you need to mount/configure the invoices and assets dirs and you probably want to alias the docker run command (e.g. `alias='docker run --volume ${PWD}/billmonger/invoices:/invoices --volume ${PWD}/billmonger/assets:/assets billmonger --output-dir /invoices --assets-dir /assets'`. With that you can run `billmonger --config-file /invoices/billing.example.yaml`
