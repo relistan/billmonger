@@ -100,7 +100,7 @@ type BillingConfig struct {
 	Bank      *BankDetails     `yaml:"bank"`
 	Colors    *BillColor       `yaml:"colors"`
 	OutputDir string
-	AssetsDir string
+	AssetsDir string          `yaml:"assets_dir"`
 }
 
 // ParseConfig parses the YAML config file which contains the settings for the
