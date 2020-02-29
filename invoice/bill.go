@@ -156,7 +156,7 @@ func (b *Bill) RenderToFile() error {
 	// It's safe to MustParse here because we validate args earlier
 	billTime := now.New(now.MustParse(b.config.Bill.Date))
 
-	outFileName := b.config.OutputDir + "/" + b.config.Business.Person + "-" +
+	outFileName := b.config.OutputDir + "/" + b.config.Business.Person + " " +
 		strings.ToUpper(billTime.EndOfMonth().Format("Jan022006")) + ".pdf"
 
 	err := b.pdf.OutputFileAndClose(outFileName)
