@@ -79,6 +79,14 @@ Flags:
   -o, --output-dir="."  The output directory to use. Overriden by config file.
 ```
 
+Installation
+------------
+
+There is not much to install! You may use the binaries provided on the Releases
+tab on GitHub. Or you may use Go tools to install it yourself. In general you
+only need to have the binary, a `billing.yaml` file, and your image assets in
+order to run Billmonger. It is not sensitive to installation path.
+
 Using Docker
 ------------
 
