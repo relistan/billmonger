@@ -82,7 +82,9 @@ Flags:
 
 Using Docker
 ------------
-
+You can run Billmonger from the command line. But some folks have
+found that it's useful to run it from a Docker container directly.
+This is also supported! Here are the steps in order to do that.
 To build it and run it directly from a Docker container you need to:
 
 * make the changes and then ...
