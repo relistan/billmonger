@@ -92,6 +92,10 @@ type BillColor struct {
 	ColorDark  Color `yaml:"color_dark"`
 }
 
+type AppConfig struct {
+	OutputDir string           `yaml:"output_dir"`
+}
+
 type BillingConfig struct {
 	Business  *BusinessDetails `yaml:"business"`
 	Bill      *BillDetails     `yaml:"bill"`
@@ -99,14 +103,13 @@ type BillingConfig struct {
 	Billables []BillableItem   `yaml:"billables"`
 	Bank      *BankDetails     `yaml:"bank"`
 	Colors    *BillColor       `yaml:"colors"`
-	OutputDir string
-	AssetsDir string          `yaml:"assets_dir"`
+	App       *AppConfig       `yaml:"app_config"`
 }
 
 // ParseConfig parses the YAML config file which contains the settings for the
 // bill we're going to process. It uses a simple FuncMap to template the text,
 // allowing the billing items to describe the current date range.
-func ParseConfig(filename string, billingDate string, outputDir string, assetsDir string) (*BillingConfig, error) {
+func ParseConfig(filename string, billingDate string, outputDir string) (*BillingConfig, error) {
 	billTime := now.New(now.MustParse(billingDate))
 
 	funcMap := template.FuncMap{
@@ -142,11 +145,10 @@ func ParseConfig(filename string, billingDate string, outputDir string, assetsDi
 	// Set the date we'll bill on
 	config.Bill.Date = billingDate
 
-  // Set the output dir
-  config.OutputDir = outputDir
-
-  // Set the assets dir
-  config.AssetsDir = assetsDir
+	// Set the output dir if it's not configured in the file
+	if config.App == nil || (config.App != nil && config.App.OutputDir == "") {
+		config.App = &AppConfig{OutputDir: outputDir}
+	}
 
 	return &config, nil
 }

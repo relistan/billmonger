@@ -58,3 +58,8 @@ colors:
     r: 16
     g: 46
     b: 95
+
+# You can use the CLI to configure these. If present here, these
+# values will override the CLI.
+#app:
+#  output_dir: "./invoices"

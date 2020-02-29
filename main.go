@@ -19,7 +19,6 @@ type CliConfig struct {
 	ConfigFile  *string
 	BillingDate *string
 	OutputDir   *string
-	AssetsDir   *string
 }
 
 func main() {
@@ -27,8 +26,7 @@ func main() {
 		ConfigFile: kingpin.Flag("config-file", "The YAML config file to use").Short('c').Default("billing.yaml").String(),
 		BillingDate: kingpin.Flag("billing-date", "The date to assume the bill is written on").
 			Short('b').Default(time.Now().Format("2006-01-02")).String(),
-		OutputDir: kingpin.Flag("output-dir", "The output directory to use").Short('o').Default(".").String(),
-		AssetsDir: kingpin.Flag("assets-dir", "The assets directory to use").Short('a').Default(".").String(),
+		OutputDir: kingpin.Flag("output-dir", "The output directory to use. Overridden by config file.").Short('o').Default(".").String(),
 	}
 	kingpin.Parse()
 
@@ -39,7 +37,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	config, err := invoice.ParseConfig(*cli.ConfigFile, *cli.BillingDate, *cli.OutputDir, *cli.AssetsDir)
+	config, err := invoice.ParseConfig(*cli.ConfigFile, *cli.BillingDate, *cli.OutputDir)
 	if err != nil {
 		println(err.Error())
 		os.Exit(1)
