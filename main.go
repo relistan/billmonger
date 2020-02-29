@@ -18,8 +18,8 @@ const (
 type CliConfig struct {
 	ConfigFile  *string
 	BillingDate *string
-	OutputDir *string
-	AssetsDir *string
+	OutputDir   *string
+	AssetsDir   *string
 }
 
 func main() {
