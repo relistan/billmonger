@@ -1,5 +1,9 @@
 *.swp
 *.swo
-vendor/
-invoices/*.pdf
+*.pdf
 billing.yaml
+*.billing.yaml
+expenses.yaml
+dist/
+/*.png
+/billmonger
