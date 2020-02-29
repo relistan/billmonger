@@ -87,7 +87,19 @@ found that it's useful to run it from a Docker container directly.
 This is also supported! Here are the steps in order to do that.
 To build it and run it directly from a Docker container you need to:
 
-* make the changes and then ...
+The following assumes that you have a directory in your current path
+called `./billmonger/invoices` where you would like to output PDF files
+from Billmonger. You can substitute this for any other local path 
+that is convenient.
+
+We will also need to be able to mount the config file from our local 
+filesystem into the Docker container. In the example below this file
+also lives in `./billmonger/invoices`
+
+Similarly, we will want to mount assents like the logo files from a
+local directory. This is assumed to be `./billmonger/assets` in  this
+example.
+
 * run `docker build . --tag billmonger` and then ...
 * run `docker run --volume ${PWD}/billmonger/invoices:/invoices --volume ${PWD}/billmonger/assets:/assets billmonger --output-dir /invoices --assets-dir /assets --config-file /invoices/billing.example.yaml`
 
