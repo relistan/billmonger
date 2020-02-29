@@ -110,7 +110,8 @@ In order to use assets from this path, you need to include `assets/` in the
 image filename in your config file.
 
 1. Run `docker build . --tag billmonger` and then ...
-2. Run ```
+2. Run
+   ```
    docker run \
      --volume ${PWD}/billmonger/invoices:/invoices \
      --volume ${PWD}/billmonger/assets:/assets \
