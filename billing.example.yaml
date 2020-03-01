@@ -33,9 +33,11 @@ billables:
     unit_price:  10.23
     currency:    €
 
-# You may enter tax as a percentage here (from 0 to 1.0).
+# You may enter tax as a percentage here (from 0 to 1.0). This will
+# be applied to all items on the invoice.
 tax:
-  percentage: 0.1
+  default_percentage: 0.1
+  tax_name: "GST" # Default "Tax". Some countries use GST, some VAT, etc
 
 # Where to send the money!
 bank:

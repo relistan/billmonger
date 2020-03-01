@@ -66,7 +66,8 @@ func (b *BillableItem) Strings() []string {
 }
 
 type TaxDetails struct {
-	Percentage float64
+	DefaultPercentage float64 `yaml:"default_percentage"`
+	TaxName           string  `yaml:"tax_name"`
 }
 
 type BankDetails struct {
@@ -97,7 +98,7 @@ type BillColor struct {
 }
 
 type AppConfig struct {
-	OutputDir string           `yaml:"output_dir"`
+	OutputDir string `yaml:"output_dir"`
 }
 
 type BillingConfig struct {

@@ -261,7 +261,10 @@ func (b *Bill) drawBillablesTable(headers []string, billables []BillableItem, ta
 	}
 
 	// Calculate tax
-	tax := subTotal * taxDetails.Percentage
+	var tax float64
+	if taxDetails != nil {
+		tax = subTotal * taxDetails.DefaultPercentage
+	}
 	total := subTotal + tax
 
 	// Draw the Sub-Total
@@ -273,11 +276,17 @@ func (b *Bill) drawBillablesTable(headers []string, billables []BillableItem, ta
 	b.textFormat(widths[len(widths)-2], 4, "Subtotal", "1", 0, "R", true, 0, "")
 	b.textFormat(widths[len(widths)-1], 4, subTotalText, "1", 0, "R", true, 0, "")
 
+	// Handle configurable tax name
+	taxName := "Tax"
+	if taxDetails != nil && taxDetails.TaxName != "" {
+		taxName = taxDetails.TaxName
+	}
+
 	// Draw Tax
 	b.pdf.Ln(4)
 	b.drawBlanks(billables, widths)
 	taxText := billables[0].Currency + " " + niceFloatStr(tax)
-	b.textFormat(widths[len(widths)-2], 4, "GST", "1", 0, "R", true, 0, "")
+	b.textFormat(widths[len(widths)-2], 4, taxName, "1", 0, "R", true, 0, "")
 	b.textFormat(widths[len(widths)-1], 4, taxText, "1", 0, "R", true, 0, "")
 
 	// Draw Total

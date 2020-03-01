@@ -16,6 +16,11 @@ are:
  * Everything on the bill is the same currency
  * Filenames will be output in a standard way
 
+Current limitations:
+
+ * Has tax support with one rate for all entries. May eventually support
+   different rates for different line items.
+
 The Problem This Solves
 ------------------------
 
