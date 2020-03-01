@@ -65,6 +65,10 @@ func (b *BillableItem) Strings() []string {
 	}
 }
 
+type TaxDetails struct {
+	Percentage float64
+}
+
 type BankDetails struct {
 	TransferType string `yaml:"transfer_type"`
 	Name         string
@@ -101,6 +105,7 @@ type BillingConfig struct {
 	Bill      *BillDetails     `yaml:"bill"`
 	BillTo    *BillToDetails   `yaml:"bill_to"`
 	Billables []BillableItem   `yaml:"billables"`
+	Tax       *TaxDetails      `yaml:"tax"`
 	Bank      *BankDetails     `yaml:"bank"`
 	Colors    *BillColor       `yaml:"colors"`
 	App       *AppConfig       `yaml:"app_config"`

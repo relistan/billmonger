@@ -16,9 +16,6 @@ are:
  * Everything on the bill is the same currency
  * Filenames will be output in a standard way
 
-Current limitations:
- * It almost has support for tax calculation but it's not there yet
-
 The Problem This Solves
 ------------------------
 
