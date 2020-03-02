@@ -3,6 +3,7 @@ package invoice
 import (
 	"bytes"
 	"fmt"
+	"math"
 	"path"
 	"regexp"
 	"strconv"
@@ -162,9 +163,10 @@ func ParseConfig(filename string, billingDate string, outputDir string) (*Billin
 // niceFloatStr takes a float and gives back a monetary, human-formatted
 // value.
 func niceFloatStr(f float64) string {
+	roundedFloat := math.Round(f*100) / 100
 	r := regexp.MustCompile("[0-9,]+.[0-9]{2}")
 	p := message.NewPrinter(language.English)
-	results := r.FindAllString(p.Sprintf("%f", f), 1)
+	results := r.FindAllString(p.Sprintf("%f", roundedFloat), 1)
 
 	if len(results) < 1 {
 		panic("got some ridiculous number that has no decimals")
