@@ -21,6 +21,11 @@ type CliConfig struct {
 	OutputDir   *string
 }
 
+func checkImageFile(config *invoice.BillingConfig) error {
+	_, err := os.Stat(config.Business.ImageFile)
+	return err
+}
+
 func main() {
 	cli := CliConfig{
 		ConfigFile: kingpin.Flag("config-file", "The YAML config file to use").Short('c').Default("billing.yaml").String(),
@@ -54,6 +59,12 @@ func main() {
 
 	if config.Business.SerifFont == "" {
 		config.Business.SerifFont = serifFont
+	}
+
+	err = checkImageFile(config)
+	if err != nil {
+		println(err.Error())
+		os.Exit(1)
 	}
 
 	bill := invoice.NewBill(config)
