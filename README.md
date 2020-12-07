@@ -124,7 +124,7 @@ image filename in your config file.
 In order to make this all easier to run, you may want to alias the docker run
 command something like this: 
 ```
-alias='docker run --volume ${PWD}/billmonger/invoices:/invoices --volume ${PWD}/billmonger/assets:/assets billmonger --output-dir /invoices'
+alias billmonger='docker run --volume ${PWD}/billmonger/invoices:/invoices --volume ${PWD}/billmonger/assets:/assets billmonger --output-dir /invoices'
 ```
 
 Saving that in your `.profile` will make it permanently available.  Having done
