@@ -164,7 +164,7 @@ func ParseConfig(filename string, billingDate string, outputDir string) (*Billin
 // value.
 func niceFloatStr(f float64) string {
 	roundedFloat := math.Round(f*100) / 100
-	r := regexp.MustCompile("[0-9,]+.[0-9]{2}")
+	r := regexp.MustCompile("-?[0-9,]+.[0-9]{2}")
 	p := message.NewPrinter(language.English)
 	results := r.FindAllString(p.Sprintf("%f", roundedFloat), 1)
 
