@@ -30,6 +30,7 @@ type BillDetails struct {
 	PaymentTerms string `yaml:"payment_terms"`
 	DueDate      string `yaml:"due_date"`
 	Date         string `yaml:"date"`
+	UseExactDate bool   `yaml:"use_exact_date"`
 }
 
 func (b *BillDetails) Strings() []string {

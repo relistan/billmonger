@@ -85,6 +85,12 @@ func (b *Bill) makeHeader() func() {
 		// It's safe to MustParse here because we validated CLI args
 		billTime := now.New(now.MustParse(b.config.Bill.Date))
 
+		// Default to rounding to end of month. Use exact date if specified
+		invoiceDate := billTime.EndOfMonth()
+		if b.config.Bill.UseExactDate {
+			invoiceDate = billTime.Time
+		}
+
 		b.pdf.SetFont(b.config.Business.SansFont, "BI", 28)
 		b.pdf.ImageOptions(b.config.Business.ImageFile, 0, 10, 100, 0, false, gofpdf.ImageOptions{}, 0, "")
 
@@ -99,13 +105,13 @@ func (b *Bill) makeHeader() func() {
 		b.pdf.SetFont(b.config.Business.SerifFont, "", 12)
 		b.text(20, 0, "Date:")
 		b.lightText()
-		b.text(20, 0, billTime.EndOfMonth().Format("January 2, 2006"))
+		b.text(20, 0, invoiceDate.Format("January 2, 2006"))
 
 		b.pdf.SetXY(140, 45)
 		b.darkText()
 		b.text(20, 0, "Invoice #:")
 		b.lightText()
-		b.text(20, 0, billTime.EndOfMonth().Format("Jan22006"))
+		b.text(20, 0, invoiceDate.Format("Jan22006"))
 
 		// Biller Name, Address
 		b.pdf.SetXY(8, 40)
